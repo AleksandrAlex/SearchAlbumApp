@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation"
+    app:startDestination="@id/albumSearchFragment">
+
+    <fragment
+        android:id="@+id/albumSearchFragment"
+        android:name="com.suslovalex.searchalbumapp.view.AlbumSearchFragment"
+        android:label="fragment_album_search"
+        tools:layout="@layout/fragment_album_search" >
+        <action
+            android:id="@+id/navigateToAlbumDescriptionFragment"
+            app:destination="@id/albumDescriptionFragment"
+            app:enterAnim="@android:anim/slide_in_left" />
+    </fragment>
+    <fragment
+        android:id="@+id/albumDescriptionFragment"
+        android:name="com.suslovalex.searchalbumapp.view.AlbumDescriptionFragment"
+        android:label="fragment_album_description"
+        tools:layout="@layout/fragment_album_description" >
+        <action
+            android:id="@+id/navigateToAlbumSearchFragment"
+            app:destination="@id/albumSearchFragment" />
+        <argument
+            android:name="collectionId"
+            app:argType="integer"
+            android:defaultValue="0" />
+    </fragment>
+</navigation>

@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Search Album App</string>
+    <string name="search_field">input title of album</string>
+</resources>
