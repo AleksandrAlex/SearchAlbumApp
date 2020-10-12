@@ -1,6 +1,6 @@
 package com.suslovalex.searchalbumapp.adapter
 
-import android.util.Log
+
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,49 +12,58 @@ import com.bumptech.glide.Glide
 import com.suslovalex.searchalbumapp.R
 import com.suslovalex.searchalbumapp.model.Album
 import com.suslovalex.searchalbumapp.view.AlbumSearchFragmentDirections
-import java.lang.Exception
 
 
-class AlbumAdapter(): RecyclerView.Adapter<AlbumAdapter.ViewHolder>(){
+class AlbumAdapter() : RecyclerView.Adapter<AlbumAdapter.ViewHolder>() {
 
     private var albums = mutableListOf<Album>()
 
-     class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
 
-        val itemAlbumImage: ImageView = itemView.findViewById(R.id.album_image)
-        val itemAlbumTitle: TextView = itemView.findViewById(R.id.album_title)
-        val itemArtistName: TextView = itemView.findViewById(R.id.artist_name)
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
+        private val itemAlbumImage: ImageView = itemView.findViewById(R.id.album_image)
+        private val itemAlbumTitle: TextView = itemView.findViewById(R.id.album_title)
+        private val itemArtistName: TextView = itemView.findViewById(R.id.artist_name)
+        private var collectionId: Int = 0
+
+        init {
+            itemView.setOnClickListener {
+                val action = AlbumSearchFragmentDirections.navigateToAlbumDescriptionFragment(collectionId)
+                Navigation.findNavController(it).navigate(action)
+            }
+        }
+
+        fun bind(album: Album) {
+            val id = album.collectionId
+            collectionId = id
+            // Fill view with our data
+            itemAlbumTitle.text = album.collectionName
+            itemArtistName.text = album.artistName
+            // Put a icon in the imageView
+            Glide.with(itemAlbumImage)
+                .load(album.artworkUrl100)
+                .placeholder(R.drawable.progress_bar)
+                .into(itemAlbumImage)
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AlbumAdapter.ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_search_album,parent, false)
+        val view =
+            LayoutInflater.from(parent.context).inflate(R.layout.item_search_album, parent, false)
         return ViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: AlbumAdapter.ViewHolder, position: Int) {
-
-        holder.itemAlbumTitle.text = albums[position].collectionName
-        holder.itemArtistName.text = albums[position].artistName
-
-        // Put a icon in the imageView
-        Glide.with(holder.itemAlbumImage)
-            .load(albums[position].artworkUrl100)
-            .placeholder(R.drawable.progress_bar)
-            .into(holder.itemAlbumImage)
-
-        holder.itemView.setOnClickListener {
-                val id = albums[position].collectionId
-                val action = AlbumSearchFragmentDirections.navigateToAlbumDescriptionFragment(id)
-                Navigation.findNavController(it).navigate(action)
-        }
+        // get album by position
+        val album = albums[position]
+        holder.bind(album)
     }
 
     override fun getItemCount(): Int {
         return albums.size
     }
 
-    fun setAlbumList(newAlbumList: List<Album>){
+    fun setAlbumList(newAlbumList: List<Album>) {
         albums = newAlbumList as MutableList<Album>
         notifyDataSetChanged()
     }
