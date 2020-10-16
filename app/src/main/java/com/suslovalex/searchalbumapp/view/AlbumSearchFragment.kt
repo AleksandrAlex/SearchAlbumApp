@@ -1,13 +1,12 @@
 package com.suslovalex.searchalbumapp.view
 
+import android.content.Context
 import android.nfc.Tag
 import android.os.Bundle
 import android.util.Log
-import android.view.KeyEvent
+import android.view.*
+import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -96,7 +95,6 @@ class AlbumSearchFragment : Fragment() {
 
     private fun setUpRecyclerView(view: View) {
         view.recyclerView.adapter = albumAdapter
-
     }
 
     private fun searchFieldListener(view: View) {
@@ -104,10 +102,16 @@ class AlbumSearchFragment : Fragment() {
             if (keyCode == KeyEvent.KEYCODE_ENTER) {
                 val albumTitle = searchView.text.toString()
                 albumViewModel.getAlbumByTitle(albumTitle)
+                hideKeyboard(view)
                 return@OnKeyListener true
             }
             false
         })
+    }
+
+    private fun hideKeyboard(view: View) {
+        val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
 }

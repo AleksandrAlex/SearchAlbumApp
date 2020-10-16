@@ -65,8 +65,8 @@ class AlbumDescriptionFragment : Fragment() {
                     price.text = errorText
                 }
                 ApiStatus.DONE -> {
-                    Toast.makeText(context, "Welcome to album description!", Toast.LENGTH_SHORT)
-                        .show()
+//                    Toast.makeText(context, "Welcome to album description!", Toast.LENGTH_SHORT)
+//                        .show()
                 }
             }
         })
