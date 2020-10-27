@@ -1,9 +1,7 @@
 package com.suslovalex.searchalbumapp.view
 
 import android.content.Context
-import android.nfc.Tag
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
@@ -17,10 +15,8 @@ import com.suslovalex.searchalbumapp.repository.Repository
 import com.suslovalex.searchalbumapp.viewmodel.AlbumViewModel
 import com.suslovalex.searchalbumapp.viewmodel.AlbumViewModelFactory
 import com.suslovalex.searchalbumapp.viewmodel.ApiStatus
-import kotlinx.android.synthetic.main.fragment_album_description.view.*
 import kotlinx.android.synthetic.main.fragment_album_search.*
 import kotlinx.android.synthetic.main.fragment_album_search.view.*
-import java.lang.Exception
 
 
 class AlbumSearchFragment : Fragment() {
@@ -29,6 +25,7 @@ class AlbumSearchFragment : Fragment() {
     private val albumViewModelFactory = AlbumViewModelFactory(repository)
     private lateinit var albumViewModel: AlbumViewModel
     private val albumAdapter by lazy { AlbumAdapter() }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +39,9 @@ class AlbumSearchFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_album_search, container, false)
         // Initialization viewModel
         initData()
+
+        initRefreshLayout(view)
+
         // Setup recycleViewAdapter
         setUpRecyclerView(view)
         // Check internet connection
@@ -49,8 +49,16 @@ class AlbumSearchFragment : Fragment() {
         // Setup listener for search field
         searchFieldListener(view)
         // Setup new album list in recyclerView
-        putDataIntoRecyclerView()
+        putDataInRecyclerview()
         return view
+    }
+
+    private fun initRefreshLayout(view: View?) {
+        view?.refresh?.setOnRefreshListener {
+            putDataInRecyclerview()
+            refresh.isRefreshing = false
+        }
+
     }
 
     private fun checkInternetConnection() {
@@ -71,17 +79,20 @@ class AlbumSearchFragment : Fragment() {
         })
     }
 
-    private fun putDataIntoRecyclerView() {
+    private fun putDataInRecyclerview() {
         albumViewModel.albums.observe(viewLifecycleOwner, Observer {
             // If we get not null response the data will be put in the recyclerView
             if (it.resultCount != 0) {
+
                 val albumList = it.results.sortedBy { albums ->
                     albums.collectionName
                 }
                 albumAdapter.setAlbumList(albumList)
                 // If we get null response or the warning will be write in the toast
             } else {
-                Toast.makeText(context, "Warning:\n The request is not correct!", Toast.LENGTH_LONG).show()
+
+                Toast.makeText(context, "Warning:\n The request is not correct!", Toast.LENGTH_LONG)
+                    .show()
                 albumAdapter.setAlbumList(mutableListOf())
             }
 
